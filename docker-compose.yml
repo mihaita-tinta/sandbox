@@ -1,0 +1,19 @@
+version: '2.4'
+services:
+  app:
+    image: app:0.0.1
+    ports:
+      - '8081:8081'
+    mem_limit: 512M
+    cpuset: "0"
+    environment:
+      WIREMOCK_HOST: http://wiremock:8080
+  wiremock:
+    image: mihaitatinta/wiremock-example:0.0.1
+    command: [ "java", "-cp", "/var/wiremock/lib/*:/var/wiremock/extensions/*", "com.github.tomakehurst.wiremock.standalone.WireMockServerRunner", "--no-request-journal", "false", "--disable-request-logging", "--async-response-threads", "100", "--async-response-enabled", "true", "--jetty-header-buffer-size", "26384", "--extensions", "com.opentable.extension.BodyTransformer,com.opentable.extension.ThymeleafBodyTransformer" ]
+    ports:
+      - '8080:8080'
+    mem_limit: 512M
+    cpuset: "1"
+    volumes:
+      - "./volumes/wiremock/extensions:/var/wiremock/extensions/"
